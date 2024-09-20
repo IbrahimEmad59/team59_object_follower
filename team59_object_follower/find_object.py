@@ -52,7 +52,7 @@ class MinimalVideoSubscriber(Node):
 		self._imgBGR = CvBridge().compressed_imgmsg_to_cv2(CompressedImage, "bgr8")
 		if(self._display_image):
 			# Display the image in a window
-			self.show_image(self._imgBGR)
+			#self.show_image(self._imgBGR)
 			x, y, w, h = self.processing(self._imgBGR)
 			msg = Point()
 			msg.x = x + w/2
@@ -82,7 +82,7 @@ class MinimalVideoSubscriber(Node):
 		imgDil = cv2.dilate(imgCanny, kernal,iterations=1)
 
 		x, y, w, h = getContours(imgDil, imgContours)
-		cv2.imshow('Video', imgContours)
+		#cv2.imshow('Video', imgContours)
 		return x, y, w, h
 	
 	def get_image(self):
@@ -115,9 +115,9 @@ def getContours(img, imgContours):
 			peri = cv2.arcLength(cnt, True)
 			approx = cv2.approxPolyDP(cnt, 0.02 * peri, True)
 			x, y, w, h = cv2.boundingRect(approx)
-			cv2.rectangle(imgContours, (x, y), (x + w, y + h), (0, 255, 0), 2)
-			cv2.putText(imgContours,"X: " + str(x + w/2), (x + w + 20, y + h + 20), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 0), 2)
-			cv2.putText(imgContours,"Y: " + str(y + h/2), (x + w + 20, y + h + 45), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 0), 2)
+			#cv2.rectangle(imgContours, (x, y), (x + w, y + h), (0, 255, 0), 2)
+			#cv2.putText(imgContours,"X: " + str(x + w/2), (x + w + 20, y + h + 20), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 0), 2)
+			#cv2.putText(imgContours,"Y: " + str(y + h/2), (x + w + 20, y + h + 45), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 0), 2)
 	return x, y, w, h
 
 if __name__ == '__main__':
