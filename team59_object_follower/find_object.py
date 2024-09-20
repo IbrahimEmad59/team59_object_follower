@@ -50,7 +50,7 @@ class MinimalVideoSubscriber(Node):
 	def _image_callback(self, CompressedImage):	
 		# The "CompressedImage" is transformed to a color image in BGR space and is store in "_imgBGR"
 		self._imgBGR = CvBridge().compressed_imgmsg_to_cv2(CompressedImage, "bgr8")
-		if(self._display_image):
+		if(not(self._display_image)):
 			# Display the image in a window
 			#self.show_image(self._imgBGR)
 			x, y, w, h = self.processing(self._imgBGR)
