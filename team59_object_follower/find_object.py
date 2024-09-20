@@ -58,7 +58,7 @@ class MinimalVideoSubscriber(Node):
 			msg.x = x + w/2
 			msg.y = y + h/2
 			self.object_location_publisher.publish(msg)
-			#self.get_logger().info(str(x))
+			self.get_logger().info("Object tracking is working!")
 				
 	def processing(self,frame):
 		imgContours = frame.copy()
@@ -89,7 +89,7 @@ class MinimalVideoSubscriber(Node):
 		return self._imgBGR
 
 	def show_image(self, img):
-		cv2.imshow(self._titleOriginal, img)
+		#cv2.imshow(self._titleOriginal, img)
 		# Cause a slight delay so image is displayed
 		self._user_input=cv2.waitKey(50) #Use OpenCV keystroke grabber for delay.
 
@@ -111,7 +111,7 @@ def getContours(img, imgContours):
 		area = cv2.contourArea(cnt)
 		minArea = 1500
 		if area > minArea:
-			cv2.drawContours(imgContours, cnt, -1, (0, 255, 0), 3)
+			#cv2.drawContours(imgContours, cnt, -1, (0, 255, 0), 3)
 			peri = cv2.arcLength(cnt, True)
 			approx = cv2.approxPolyDP(cnt, 0.02 * peri, True)
 			x, y, w, h = cv2.boundingRect(approx)
