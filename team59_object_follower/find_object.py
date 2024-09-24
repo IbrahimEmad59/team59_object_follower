@@ -20,9 +20,13 @@ class MinimalVideoSubscriber(Node):
 		# Set Parameters
 		self.declare_parameter('show_image_bool', False)
 		self.declare_parameter('window_name', "Raw Image")
+		
+		self.get_logger().info("1")
 
 		#Determine Window Showing Based on Input
 		self._display_image = bool(self.get_parameter('show_image_bool').value)
+
+		self.get_logger().info("2")
 
 		# Declare some variables
 		self._titleOriginal = self.get_parameter('window_name').value # Image Window Title	
@@ -31,11 +35,15 @@ class MinimalVideoSubscriber(Node):
 			cv2.namedWindow(self._titleOriginal, cv2.WINDOW_AUTOSIZE ) # Viewing Window
 			cv2.moveWindow(self._titleOriginal, 50, 50) # Viewing Window Original Location
 	
+		self.get_logger().info("3")
+
 		#Set up QoS Profiles for passing images over WiFi
 		image_qos_profile = QoSProfile(depth=5)
 		image_qos_profile.history = QoSHistoryPolicy.KEEP_LAST
 		image_qos_profile.durability = QoSDurabilityPolicy.VOLATILE 
 		image_qos_profile.reliability = QoSReliabilityPolicy.BEST_EFFORT 
+
+		self.get_logger().info("4")
 
 		#Declare that the minimal_video_subscriber node is subcribing to the /camera/image/compressed topic.
 		self._video_subscriber = self.create_subscription(
@@ -43,9 +51,13 @@ class MinimalVideoSubscriber(Node):
 				'/image_raw/compressed',
 				self._image_callback,
 				image_qos_profile)
+		
+		self.get_logger().info("Subs")
 		self._video_subscriber # Prevents unused variable warning.
 		
 		self.object_location_publisher = self.create_publisher(Point,'/geometry_msgs', 10)
+
+		self.get_logger().info("pub")
 
 	def _image_callback(self, CompressedImage):
 
