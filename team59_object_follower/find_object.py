@@ -47,20 +47,24 @@ class MinimalVideoSubscriber(Node):
 		
 		self.object_location_publisher = self.create_publisher(Point,'/geometry_msgs', 10)
 
-	def _image_callback(self, CompressedImage):	
+	def _image_callback(self, CompressedImage):
+
+		self.get_logger().info("Work1")
+
 		# The "CompressedImage" is transformed to a color image in BGR space and is store in "_imgBGR"
 		self._imgBGR = CvBridge().compressed_imgmsg_to_cv2(CompressedImage, "bgr8")
-		if(not(self._display_image)):
-			# Display the image in a window
-			#self.show_image(self._imgBGR)
-			x, y, w, h = self.processing(self._imgBGR)
-			msg = Point()
-			msg.x = x + w/2
-			msg.y = y + h/2
-			self.object_location_publisher.publish(msg)
-			self.get_logger().info("Object tracking is working!")
+		# Display the image in a window
+		#self.show_image(self._imgBGR)
+		x, y, w, h = self.processing(self._imgBGR)
+		self.get_logger().info("Work3")
+		msg = Point()
+		msg.x = x + w/2
+		msg.y = y + h/2
+		self.object_location_publisher.publish(msg)
+		self.get_logger().info("Object tracking is working!")
 				
 	def processing(self,frame):
+		self.get_logger().info("Pross2")
 		imgContours = frame.copy()
 		imgBlur = cv2.GaussianBlur(frame, (7, 7), 1)
 		imgHSV = cv2.cvtColor(imgBlur, cv2.COLOR_BGR2HSV)
@@ -106,7 +110,11 @@ def main():
 
 def getContours(img, imgContours):
 	contours, hierarchy = cv2.findContours(img, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
-	x,y,w,h = [0,0,0,0]
+	x = 0
+	y = 0
+	w = 0
+	h = 0
+
 	for cnt in contours:
 		area = cv2.contourArea(cnt)
 		minArea = 1500
