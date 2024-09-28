@@ -21,12 +21,8 @@ class MinimalVideoSubscriber(Node):
 		self.declare_parameter('show_image_bool', False)
 		self.declare_parameter('window_name', "Raw Image")
 		
-		self.get_logger().info("1")
-
 		#Determine Window Showing Based on Input
 		self._display_image = bool(self.get_parameter('show_image_bool').value)
-
-		self.get_logger().info("2")
 
 		# Declare some variables
 		self._titleOriginal = self.get_parameter('window_name').value # Image Window Title	
@@ -35,15 +31,11 @@ class MinimalVideoSubscriber(Node):
 			cv2.namedWindow(self._titleOriginal, cv2.WINDOW_AUTOSIZE ) # Viewing Window
 			cv2.moveWindow(self._titleOriginal, 50, 50) # Viewing Window Original Location
 	
-		self.get_logger().info("3")
-
 		#Set up QoS Profiles for passing images over WiFi
 		image_qos_profile = QoSProfile(depth=5)
 		image_qos_profile.history = QoSHistoryPolicy.KEEP_LAST
 		image_qos_profile.durability = QoSDurabilityPolicy.VOLATILE 
 		image_qos_profile.reliability = QoSReliabilityPolicy.BEST_EFFORT 
-
-		self.get_logger().info("4")
 
 		#Declare that the minimal_video_subscriber node is subcribing to the /camera/image/compressed topic.
 		self._video_subscriber = self.create_subscription(
@@ -51,24 +43,17 @@ class MinimalVideoSubscriber(Node):
 				'/image_raw/compressed',
 				self._image_callback,
 				image_qos_profile)
-		
-		self.get_logger().info("Subs")
 		self._video_subscriber # Prevents unused variable warning.
 		
 		self.object_location_publisher = self.create_publisher(Point,'/geometry_msgs', 10)
 
-		self.get_logger().info("pub")
 
 	def _image_callback(self, CompressedImage):
-
-		self.get_logger().info("Work1")
-
 		# The "CompressedImage" is transformed to a color image in BGR space and is store in "_imgBGR"
 		self._imgBGR = CvBridge().compressed_imgmsg_to_cv2(CompressedImage, "bgr8")
 		# Display the image in a window
 		#self.show_image(self._imgBGR)
 		x, y, w, h = self.processing(self._imgBGR)
-		self.get_logger().info("Work3")
 		msg = Point()
 		msg.x = x + w/2
 		msg.y = y + h/2
@@ -76,15 +61,14 @@ class MinimalVideoSubscriber(Node):
 		self.get_logger().info("Object tracking is working!")
 				
 	def processing(self,frame):
-		self.get_logger().info("Pross2")
 		imgContours = frame.copy()
 		imgBlur = cv2.GaussianBlur(frame, (7, 7), 1)
 		imgHSV = cv2.cvtColor(imgBlur, cv2.COLOR_BGR2HSV)
 
-		lower_blue = np.array([90, 50, 50])
-		upper_blue = np.array([140, 255, 255])
+		lower_red = np.array([0, 120, 70])
+		upper_red = np.array([10, 255, 255])
 
-		mask = cv2.inRange(imgHSV, lower_blue, upper_blue)
+		mask = cv2.inRange(imgHSV, lower_red, upper_red)
 		imgBlue = cv2.bitwise_and(frame, frame, mask=mask)
 
 		imgGray = cv2.cvtColor(imgBlue, cv2.COLOR_BGR2GRAY)
