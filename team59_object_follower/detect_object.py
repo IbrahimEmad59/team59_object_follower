@@ -80,19 +80,22 @@ class DetectObject(Node):
             # Get the largest contour (assuming it's the object)
             largest_contour = max(contours, key=cv2.contourArea)
 
-            # Get the center of the contour
-            M = cv2.moments(largest_contour)
-            if M["m00"] > 0:
-                cx = int(M["m10"] / M["m00"])
-                cy = int(M["m01"] / M["m00"])
-                self.get_logger().info(f"Object detected at: ({cx}, {cy})")
-                return (cx, cy)
-        
-        return None
+            # Get the bounding rectangle of the largest contour
+            x, y, w, h = cv2.boundingRect(largest_contour)
+
+            # Calculate three points: leftmost, center, and rightmost
+            Lx = x  # Leftmost point
+            Rx = x + w  # Rightmost point
+            Cx = x + w // 2  # Center x point
+            Cy = y + h // 2  # Center y point
+
+            self.get_logger().info(f"Object detected at: ({Cx}, {Cy})")
+
+        return (Cx, Cy, Lx, Rx)
 
     def combine_camera_lidar(self, object_location):
         """Combine camera and LIDAR data to determine the object's location."""
-        cx, cy = object_location
+        Cx, Cy, Lx, Rx = object_location
 
         if self.lidar_data is None:
             return None
@@ -102,8 +105,13 @@ class DetectObject(Node):
         image_width = 320  # Image width in pixels 
         fov_degrees = 62.2  # Camera field of view 
         
-        # Calculate the angle in radians based on the horizontal pixel position
-        angle = (cx - image_width / 2.0) * (fov_degrees / image_width) * (np.pi / 180.0)
+        # Calculate the angles in radians based on the horizontal pixel position
+        C_Angle = (Cx - image_width / 2.0) * (fov_degrees / image_width) * (np.pi / 180.0)
+        L_Angle = (Lx - image_width / 2.0) * (fov_degrees / image_width) * (np.pi / 180.0)
+        R_Angle = (Rx - image_width / 2.0) * (fov_degrees / image_width) * (np.pi / 180.0)
+
+        angle = (L_Angle + C_Angle + R_Angle) / 3
+        
         self.get_logger().info(f"The current angle is: {angle}")
 
         # Now, find the corresponding LIDAR distance at that angle (this is a basic approach)

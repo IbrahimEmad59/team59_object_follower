@@ -25,6 +25,8 @@ setup(
             "view_image_raw2=team59_object_follower.view_image_raw2:main",
             "rotate_robot=team59_object_follower.rotate_robot:main",
             "detect_object=team59_object_follower.detect_object:main",
+            "chase_object=team59_object_follower.chase_object:main",
+            "get_object_range=team59_object_follower.get_object_range:main",
         ],
     },
 )
