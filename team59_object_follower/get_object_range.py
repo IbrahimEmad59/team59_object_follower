@@ -5,16 +5,24 @@ from rclpy.node import Node
 from geometry_msgs.msg import Point
 from sensor_msgs.msg import LaserScan
 import numpy as np
+from rclpy.qos import QoSProfile, QoSDurabilityPolicy, QoSReliabilityPolicy, QoSHistoryPolicy
 
 class GetObjectRange(Node):
     def __init__(self):
         super().__init__('get_object_range')
 
+        #Set up QoS Profiles for passing images over WiFi
+        image_qos_profile = QoSProfile(depth=5)
+        image_qos_profile.history = QoSHistoryPolicy.KEEP_LAST
+        image_qos_profile.durability = QoSDurabilityPolicy.VOLATILE 
+        image_qos_profile.reliability = QoSReliabilityPolicy.BEST_EFFORT 
+
+
         # Subscriber to combined object location from detect_object node
         self.object_sub = self.create_subscription(Point, '/combined_object_location', self.object_callback, 10)
 
         # Subscriber to LIDAR scan data
-        self.lidar_sub = self.create_subscription(LaserScan, '/scan', self.lidar_callback, 10)
+        self.lidar_sub = self.create_subscription(LaserScan, '/scan', self.lidar_callback, image_qos_profile)
 
         # Publisher for object range (distance and angle)
         self.range_pub = self.create_publisher(Point, '/object_range', 10)
@@ -49,7 +57,7 @@ class GetObjectRange(Node):
         object_point = Point()
         object_point.x = lidar_distance  # Distance from robot to object
         object_point.y = object_angle    # Angle of the object relative to the robot
-        object_point.z = 0  # Unused, can be used for height or other data
+        object_point.z = 0.0  # Unused, can be used for height or other data
 
         # Publish the object's range
         self.range_pub.publish(object_point)
