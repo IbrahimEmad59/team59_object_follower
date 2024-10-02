@@ -35,6 +35,10 @@ class GetObjectRange(Node):
 
     def lidar_callback(self, data):
         """Callback for processing the LIDAR scan data."""
+        # Filter out NaN values from the LIDAR ranges
+        ranges_filtered = [r if not np.isnan(r) else 0.0 for r in data.ranges]
+        data.ranges = ranges_filtered
+        
         self.lidar_data = data
 
     def object_callback(self, data):
