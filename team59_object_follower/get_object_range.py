@@ -56,7 +56,7 @@ class GetObjectRange(Node):
             object_angle += 2*np.pi
 
         # Get the corresponding LIDAR distance for the object angle
-        lidar_angle_index = int((object_angle + np.pi) / self.lidar_data.angle_increment)
+        lidar_angle_index = int((object_angle) / self.lidar_data.angle_increment)
         lidar_distance = self.lidar_data.ranges[lidar_angle_index]
         #lidar_distance = self.lidar_data.ranges[0]
 
