@@ -80,6 +80,8 @@ class DetectObject(Node):
         # Find contours of the object
         contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
+        Cx, Cy, Lx, Rx = 0, 0, 0, 0
+
         if contours:
             # Get the largest contour (assuming it's the object)
             largest_contour = max(contours, key=cv2.contourArea)
@@ -110,9 +112,9 @@ class DetectObject(Node):
         fov_degrees = 62.2  # Camera field of view 
         
         # Calculate the angles in radians based on the horizontal pixel position
-        C_Angle = (Cx - image_width / 2.0) * (fov_degrees / image_width) * (np.pi / 180.0)
-        L_Angle = (Lx - image_width / 2.0) * (fov_degrees / image_width) * (np.pi / 180.0)
-        R_Angle = (Rx - image_width / 2.0) * (fov_degrees / image_width) * (np.pi / 180.0)
+        C_Angle = (Cx) * (fov_degrees / image_width) * (np.pi / 180.0)
+        L_Angle = (Lx) * (fov_degrees / image_width) * (np.pi / 180.0)
+        R_Angle = (Rx) * (fov_degrees / image_width) * (np.pi / 180.0)
 
         angle = (L_Angle + C_Angle + R_Angle) / 3
         
