@@ -56,6 +56,7 @@ class GetObjectRange(Node):
         # Get the corresponding LIDAR distance for the object angle
         lidar_angle_index = int((object_angle + np.pi) / self.lidar_data.angle_increment)
         lidar_distance = self.lidar_data.ranges[lidar_angle_index]
+        lidar_distance = self.lidar_data.ranges[0.0]
 
         # Create Point message for object range (distance and angle)
         object_point = Point()
