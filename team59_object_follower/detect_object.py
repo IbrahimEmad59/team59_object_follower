@@ -117,6 +117,7 @@ class DetectObject(Node):
         R_Angle = (Rx - image_width / 2.0) * (fov_degrees / image_width) * (np.pi / 180.0) * 0
 
         angle = (L_Angle + C_Angle + R_Angle) / 3
+        angle = C_Angle
         
         self.get_logger().info(f"The current angle is: {angle}")
 
