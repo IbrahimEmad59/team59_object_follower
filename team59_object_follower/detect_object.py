@@ -58,6 +58,10 @@ class DetectObject(Node):
 
     def lidar_callback(self, data):
         """Callback for processing the LIDAR scan data."""
+        # Filter out NaN values from the LIDAR ranges
+        ranges_filtered = [r if not np.isnan(r) else 0.0 for r in data.ranges]
+        data.ranges = ranges_filtered
+
         # Store the LIDAR data for later use
         self.lidar_data = data
 
