@@ -36,6 +36,13 @@ class ChaseObject(Node):
         self.max_linear_velocity = 0.1  # meters per second
         self.max_angular_velocity = 1.5  # radians per second
 
+        # Desired distance to the object (1 meter, adjust as needed)
+        self.desired_distance = 0.5  # meter
+
+        # 5% tolerance on distance and angle
+        self.distance_tolerance = 0.05 * self.desired_distance  # 5% of the desired distance
+        self.angle_tolerance = 0.05  # 5% tolerance in radians (adjust based on your application)
+
         # PID controllers for angular and linear control, with output limits
         self.angular_pid = PIDController(kp=1.0, ki=0.0, kd=0.1, output_limits=(-self.max_angular_velocity, self.max_angular_velocity))
         self.linear_pid = PIDController(kp=1.0, ki=0.0, kd=0.1, output_limits=(0.0, self.max_linear_velocity))
@@ -45,9 +52,6 @@ class ChaseObject(Node):
 
         # Publisher for velocity commands
         self.cmd_pub = self.create_publisher(Twist, '/cmd_vel', 10)
-
-        # Desired distance to the object
-        self.desired_distance = 1.0  # meter
 
         # Time tracking for PID computation
         self.prev_time = self.get_clock().now()
@@ -63,13 +67,22 @@ class ChaseObject(Node):
         dt = (current_time - self.prev_time).nanoseconds / 1e9  # Convert nanoseconds to seconds
         self.prev_time = current_time
 
-        # Compute angular velocity to rotate toward the object
-        angular_error = object_angle  # We want the angle to be 0 (i.e., facing the object)
-        angular_velocity = self.angular_pid.compute(angular_error, dt)
+        # Compute angular error (we want the angle to be 0, i.e., facing the object)
+        angular_error = object_angle
 
-        # Compute linear velocity to maintain the desired distance
+        # Compute linear error (we want the distance to be self.desired_distance)
         linear_error = self.desired_distance - object_distance
-        linear_velocity = self.linear_pid.compute(linear_error, dt)
+
+        # Check if the errors are within tolerance
+        if abs(angular_error) < self.angle_tolerance:
+            angular_velocity = 0.0  # No need to rotate further
+        else:
+            angular_velocity = self.angular_pid.compute(angular_error, dt)
+
+        if abs(linear_error) < self.distance_tolerance:
+            linear_velocity = 0.0  # No need to move forward/backward further
+        else:
+            linear_velocity = self.linear_pid.compute(linear_error, dt)
 
         # Ensure the computed velocities are within the max limits
         linear_velocity = max(min(linear_velocity, self.max_linear_velocity), 0.0)
