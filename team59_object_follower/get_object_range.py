@@ -38,7 +38,7 @@ class GetObjectRange(Node):
         # Filter out NaN values from the LIDAR ranges
         ranges_filtered = [r if not np.isnan(r) else 0.0 for r in data.ranges]
         data.ranges = ranges_filtered
-        
+
         self.lidar_data = data
 
     def object_callback(self, data):
@@ -54,7 +54,7 @@ class GetObjectRange(Node):
         object_angle = np.arctan2(self.object_location.y, self.object_location.x)
 
         # Get the corresponding LIDAR distance for the object angle
-        lidar_angle_index = int((object_angle + np.pi) * len(self.lidar_data.ranges) / (2 * np.pi))
+        lidar_angle_index = int((object_angle + np.pi) / self.lidar_data.angle_increment)
         lidar_distance = self.lidar_data.ranges[lidar_angle_index]
 
         # Create Point message for object range (distance and angle)

@@ -113,15 +113,15 @@ class DetectObject(Node):
         
         # Calculate the angles in radians based on the horizontal pixel position
         C_Angle = (Cx - image_width / 2.0) * (fov_degrees / image_width) * (np.pi / 180.0)
-        L_Angle = (Lx - image_width / 2.0) * (fov_degrees / image_width) * (np.pi / 180.0)
-        R_Angle = (Rx - image_width / 2.0) * (fov_degrees / image_width) * (np.pi / 180.0)
+        L_Angle = (Lx - image_width / 2.0) * (fov_degrees / image_width) * (np.pi / 180.0) * 0
+        R_Angle = (Rx - image_width / 2.0) * (fov_degrees / image_width) * (np.pi / 180.0) * 0
 
         angle = (L_Angle + C_Angle + R_Angle) / 3
         
         self.get_logger().info(f"The current angle is: {angle}")
 
         # Now, find the corresponding LIDAR distance at that angle (this is a basic approach)
-        lidar_angle_index = int((angle + np.pi) * len(self.lidar_data.ranges) / (2 * np.pi))
+        lidar_angle_index = int((angle + np.pi) / self.lidar_data.angle_increment)
         lidar_distance = self.lidar_data.ranges[lidar_angle_index]
 
         # Create a Point message for the object's position in polar coordinates (angle, distance)
