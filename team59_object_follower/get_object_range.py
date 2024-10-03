@@ -48,30 +48,45 @@ class GetObjectRange(Node):
         if self.lidar_data:
             self.compute_object_range()
 
-    def compute_object_range(self):
-        """Computes the object's range and angle based on LIDAR and camera data."""
-        # Get the angle of the object from the object_location
-        object_angle = np.arctan2(self.object_location.y, self.object_location.x)
-        self.get_logger().info(f"-pi to pi: {object_angle}")
-        if(object_angle < 0):
-            object_angle += 2*np.pi
-            
-        self.get_logger().info(f"0 to 2pi: {object_angle}")
+def compute_object_range(self):
+    """Computes the object's range and angle based on LIDAR and camera data."""
+    # Get the angle of the object from the object_location
+    object_angle = np.arctan2(self.object_location.y, self.object_location.x)
+    
+    # Convert angle from [-pi, pi] to [0, 2pi]
+    if object_angle < 0:
+        object_angle += 2 * np.pi
 
-        # Get the corresponding LIDAR distance for the object angle
-        lidar_angle_index = int((object_angle) / self.lidar_data.angle_increment)
-        lidar_distance = self.lidar_data.ranges[lidar_angle_index]
-        #lidar_distance = self.lidar_data.ranges[0]
+    self.get_logger().info(f"0 to 2pi: {object_angle}")
 
-        # Create Point message for object range (distance and angle)
-        object_point = Point()
-        object_point.x = lidar_distance  # Distance from robot to object
-        object_point.y = object_angle    # Angle of the object relative to the robot
-        object_point.z = 0.0  # Unused, can be used for height or other data
+    # Map the object angle to the LIDAR's angular range (angle_min to angle_max)
+    # Ensure the object_angle is within the LIDAR's scanning range
+    lidar_min_angle = self.lidar_data.angle_min  # LIDAR's minimum angle (e.g., -pi/2)
+    lidar_max_angle = self.lidar_data.angle_max  # LIDAR's maximum angle (e.g., pi/2)
 
-        # Publish the object's range
-        self.range_pub.publish(object_point)
+    # Check if the object angle is within the LIDAR's angular range
+    # If not, it means the object is outside the LIDAR's field of view
+    if object_angle < lidar_min_angle or object_angle > lidar_max_angle:
+        self.get_logger().warn(f"Object angle {object_angle} is out of LIDAR range!")
+        return  # You might want to handle this case differently
+    
+    # Compute the corresponding LIDAR index
+    lidar_angle_index = int((object_angle - lidar_min_angle) / self.lidar_data.angle_increment)
 
+    # Ensure the index is within the bounds of the LIDAR ranges array
+    lidar_angle_index = min(max(lidar_angle_index, 0), len(self.lidar_data.ranges) - 1)
+
+    # Get the corresponding LIDAR distance for the object angle
+    lidar_distance = self.lidar_data.ranges[lidar_angle_index]
+
+    # Create Point message for object range (distance and angle)
+    object_point = Point()
+    object_point.x = lidar_distance  # Distance from robot to object
+    object_point.y = object_angle    # Angle of the object relative to the robot
+    object_point.z = 0.0  # Unused, can be used for height or other data
+
+    # Publish the object's range
+    self.range_pub.publish(object_point)
 
 def main(args=None):
     rclpy.init(args=args)
