@@ -37,7 +37,7 @@ class ChaseObject(Node):
         self.max_angular_velocity = 1.5  # radians per second
 
         # Desired distance to the object (1 meter, adjust as needed)
-        self.desired_distance = 0.5  # meter
+        self.desired_distance = 0.35  # meter
 
         # 5% tolerance on distance and angle
         self.distance_tolerance = 0.05 * self.desired_distance  # 5% of the desired distance
