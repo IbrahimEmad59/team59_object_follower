@@ -21,10 +21,10 @@ class PIDController:
         output = self.kp * error + self.ki * self.integral + self.kd * derivative
         self.prev_error = error
 
-        # Apply output limits if provided
-        if self.output_limits is not None:
-            min_output, max_output = self.output_limits
-            output = max(min(output, max_output), min_output)
+        # # Apply output limits if provided
+        # if self.output_limits is not None:
+        #     min_output, max_output = self.output_limits
+        #     output = max(min(output, max_output), min_output)
 
         return output
 
