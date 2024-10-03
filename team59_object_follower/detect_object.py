@@ -136,7 +136,7 @@ class DetectObject(Node):
         object_point = Point()
         object_point.x = lidar_distance * np.cos(angle)
         object_point.y = lidar_distance * np.sin(angle)
-        object_point.z = 0.0  # Assuming the object is on the same plane as the robot
+        object_point.z = angle  # Angle of the object relative to the robot
 
         return object_point
 
