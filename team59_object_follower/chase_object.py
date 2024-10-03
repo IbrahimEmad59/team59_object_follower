@@ -88,6 +88,9 @@ class ChaseObject(Node):
         linear_velocity = max(min(linear_velocity, self.max_linear_velocity), 0.0)
         angular_velocity = max(min(angular_velocity, self.max_angular_velocity), -self.max_angular_velocity)
 
+        self.get_logger().info(f"The linear velocity: {linear_velocity}")
+        self.get_logger().info(f"The angular velocity: {angular_velocity}")
+
         # Create Twist message with linear and angular velocity
         twist = Twist()
         twist.linear.x = linear_velocity  # Forward/backward velocity
