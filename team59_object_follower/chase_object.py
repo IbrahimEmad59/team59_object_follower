@@ -95,7 +95,7 @@ class ChaseObject(Node):
 
         # Create Twist message with linear and angular velocity
         twist = Twist()
-        twist.linear.x = linear_velocity  # Forward/backward velocity
+        twist.linear.x = -linear_velocity  # Forward/backward velocity
         twist.angular.z = angular_velocity  # Rotational velocity
 
         # Publish the velocity commands
