@@ -69,9 +69,11 @@ class ChaseObject(Node):
 
         # Compute angular error (we want the angle to be 0, i.e., facing the object)
         angular_error = object_angle
+        self.get_logger().info(f"The angular_error: {angular_error}")
 
         # Compute linear error (we want the distance to be self.desired_distance)
         linear_error = self.desired_distance - object_distance
+        self.get_logger().info(f"The linear_error: {linear_error}")
 
         # Check if the errors are within tolerance
         if abs(angular_error) < self.angle_tolerance:
