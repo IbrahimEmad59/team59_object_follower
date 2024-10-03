@@ -86,7 +86,7 @@ class GetObjectRange(Node):
         # Create Point message for object range (distance and angle)
         object_point = Point()
         object_point.x = lidar_distance  # Distance from robot to object
-        object_point.y = object_angle2    # Angle of the object relative to the robot
+        object_point.y = -1 * object_angle2    # Angle of the object relative to the robot
         object_point.z = 0.0  # Unused, can be used for height or other data
 
         # Publish the object's range
