@@ -52,8 +52,11 @@ class GetObjectRange(Node):
         """Computes the object's range and angle based on LIDAR and camera data."""
         # Get the angle of the object from the object_location
         object_angle = np.arctan2(self.object_location.y, self.object_location.x)
+        self.get_logger().info(f"-pi to pi: {object_angle}")
         if(object_angle < 0):
             object_angle += 2*np.pi
+            
+        self.get_logger().info(f"0 to 2pi: {object_angle}")
 
         # Get the corresponding LIDAR distance for the object angle
         lidar_angle_index = int((object_angle) / self.lidar_data.angle_increment)
