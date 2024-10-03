@@ -54,8 +54,8 @@ class GetObjectRange(Node):
         object_angle = np.arctan2(self.object_location.y, self.object_location.x)
         
         # Convert angle from [-pi, pi] to [0, 2pi]
-        if object_angle < 0:
-            object_angle += 2 * np.pi
+        #if object_angle < 0:
+            #object_angle += 2 * np.pi
 
         self.get_logger().info(f"0 to 2pi: {object_angle}")
 
