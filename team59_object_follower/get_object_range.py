@@ -71,7 +71,7 @@ class GetObjectRange(Node):
             return  # You might want to handle this case differently
         
         # Compute the corresponding LIDAR index
-        lidar_angle_index = int((object_angle) / self.lidar_data.angle_increment)
+        lidar_angle_index = int((object_angle - lidar_min_angle) / self.lidar_data.angle_increment)
 
         # Ensure the index is within the bounds of the LIDAR ranges array
         lidar_angle_index = min(max(lidar_angle_index, 0), len(self.lidar_data.ranges) - 1)
