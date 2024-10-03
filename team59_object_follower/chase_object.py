@@ -45,7 +45,7 @@ class ChaseObject(Node):
 
         # PID controllers for angular and linear control, with output limits
         self.angular_pid = PIDController(kp=1.2, ki=0.0, kd=0.5, output_limits=(-self.max_angular_velocity, self.max_angular_velocity))
-        self.linear_pid = PIDController(kp=1.0, ki=0.0, kd=0.1, output_limits=(0.0, self.max_linear_velocity))
+        self.linear_pid = PIDController(kp=1.0, ki=0.0, kd=0.1, output_limits=(-self.max_linear_velocity, self.max_linear_velocity))
 
         # Subscriber to object range (distance and angle)
         self.range_sub = self.create_subscription(Point, '/object_range', self.range_callback, 10)
@@ -85,7 +85,7 @@ class ChaseObject(Node):
             linear_velocity = self.linear_pid.compute(linear_error, dt)
 
         # Ensure the computed velocities are within the max limits
-        linear_velocity = max(min(linear_velocity, self.max_linear_velocity), 0.0)
+        linear_velocity = max(min(linear_velocity, self.max_linear_velocity), -self.max_linear_velocity)
         angular_velocity = max(min(angular_velocity, self.max_angular_velocity), -self.max_angular_velocity)
 
         self.get_logger().info(f"The linear velocity: {linear_velocity}")
