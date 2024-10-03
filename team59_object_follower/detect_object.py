@@ -118,11 +118,18 @@ class DetectObject(Node):
 
         angle = (L_Angle + C_Angle + R_Angle) / 3
         angle = C_Angle
-        
+        # Convert angle from [-pi, pi] to [0, 2pi]
+        if angle < 0:
+            angle += 2 * np.pi
+
         self.get_logger().info(f"The current angle is: {angle}")
 
-        # Now, find the corresponding LIDAR distance at that angle (this is a basic approach)
-        lidar_angle_index = int((angle + np.pi) / self.lidar_data.angle_increment)
+        # Compute the corresponding LIDAR index
+        lidar_angle_index = int((angle - self.lidar_data.angle_min) / self.lidar_data.angle_increment)
+
+        # Ensure the index is within the bounds of the LIDAR ranges array
+        lidar_angle_index = min(max(lidar_angle_index, 0), len(self.lidar_data.ranges) - 1)
+
         lidar_distance = self.lidar_data.ranges[lidar_angle_index]
 
         # Create a Point message for the object's position in polar coordinates (angle, distance)
