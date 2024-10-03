@@ -44,8 +44,8 @@ class ChaseObject(Node):
         self.angle_tolerance = 0.05  # 5% tolerance in radians (adjust based on your application)
 
         # PID controllers for angular and linear control, with output limits
-        self.angular_pid = PIDController(kp=1.2, ki=0.0, kd=0.5, output_limits=(-self.max_angular_velocity, self.max_angular_velocity))
-        self.linear_pid = PIDController(kp=1.0, ki=0.0, kd=0.1, output_limits=(-self.max_linear_velocity, self.max_linear_velocity))
+        self.angular_pid = PIDController(kp=2.2, ki=0.0, kd=0.5, output_limits=(-self.max_angular_velocity, self.max_angular_velocity))
+        self.linear_pid = PIDController(kp=2.2, ki=0.0, kd=0.5, output_limits=(-self.max_linear_velocity, self.max_linear_velocity))
 
         # Subscriber to object range (distance and angle)
         self.range_sub = self.create_subscription(Point, '/object_range', self.range_callback, 10)
