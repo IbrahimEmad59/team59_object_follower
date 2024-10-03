@@ -64,6 +64,8 @@ class GetObjectRange(Node):
         # Ensure the object_angle is within the LIDAR's scanning range
         lidar_min_angle = self.lidar_data.angle_min  
         lidar_max_angle = self.lidar_data.angle_max  
+        self.get_logger().info(f"lidar_min_angle: {lidar_min_angle}")
+        self.get_logger().info(f"lidar_max_angle: {lidar_max_angle}")
 
         # Check if the object angle is within the LIDAR's angular range
         # If not, it means the object is outside the LIDAR's field of view
